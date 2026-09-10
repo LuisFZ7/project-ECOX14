@@ -9,6 +9,7 @@
 dados/bronze/*
 dados/prata/*
 dados/ouro/*
+/relatorios
 
 # Excecao: mantem as pastas visiveis no GitHub, mesmo vazias.
 !dados/**/.gitkeep
