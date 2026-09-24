@@ -6,8 +6,8 @@ import shutil
 import json
 
 
-DATASET = "arnabchaki/popular-video-games-1980-2023"
-BRONZE = Path("../dados/bronze/PopularGames")
+DATASET = "ujjwalaggarwal402/video-games-dataset"
+BRONZE = Path("../dados/bronze/FamousGames")
 
 def baixar():
     pasta = kagglehub.dataset_download(DATASET)
@@ -19,12 +19,18 @@ def localizar(pasta):
     if not arquivos:
         raise FileNotFoundError("nenhum CSV")
     print("encontrados:", [a.name for a in arquivos])
+    termo_buscado = "Video Games Data.csv"
+
+    for arq in arquivos:
+        if termo_buscado.lower() in arq.name.lower():
+            return arq
+        
     return arquivos[0]
 
 def copiar(origem):
     BRONZE.mkdir(parents=True, exist_ok=True)
     hoje = date.today().strftime("%Y%m%d")
-    destino = BRONZE / f"gamespopular_{hoje}.csv"
+    destino = BRONZE / f"gamesfamous_{hoje}.csv"
     shutil.copy(origem, destino)
     return destino
 

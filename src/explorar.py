@@ -5,7 +5,7 @@ from wordcloud import WordCloud
 
 RELATORIOS = Path("relatorios")
 
-BRONZE = Path("../dados/bronze/SteamGames")
+BRONZE = Path("../dados/bronze/PopularGames")
 PADRAO = "games*.csv"
 
 
@@ -35,12 +35,10 @@ def gerar(caminho):
       "Tags",
     ]
 
-    # Remove apenas as colunas que realmente existem no DataFrame
     df_analise = df.drop(
       columns=[c for c in colunas_texto if c in df.columns], errors="ignore"
     )
 
-    # Gera o relatório sem as colunas de texto problemáticas
     perfil = ProfileReport(df_analise, title=caminho.name, minimal=True)
 
     RELATORIOS.mkdir(exist_ok=True)

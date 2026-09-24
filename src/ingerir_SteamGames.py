@@ -24,7 +24,7 @@ def localizar(pasta):
 def copiar(origem):
     BRONZE.mkdir(parents=True, exist_ok=True)
     hoje = date.today().strftime("%Y%m%d")
-    destino = BRONZE / f"games_{hoje}.csv"
+    destino = BRONZE / f"gamessteam_{hoje}.csv"
     shutil.copy(origem, destino)
     return destino
 
