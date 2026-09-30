@@ -35,59 +35,64 @@ def carregar():
 
     return df, caminho
 
-def tirar_espacos(df):
-    df.columns = df.columns.str.strip()
-    for coluna in df.select_dtypes(include="object"):
-        df[coluna] = df[coluna].str.strip()
-    return df
-
-def conferir_chave(df, chave="title"):
-    repetidas = df[chave].duplicated().sum()
-    print("chaves repetidas:", repetidas)
-    if repetidas:
-        print(df[df[chave].duplicated(keep=False)])
-    return df.drop_duplicates(subset=chave)
-
-def transformK_number(valor):
-    if pd.isna(valor):
-        return valor
-    
-def tratar_metricas_jogos(df):
-    colunas_metricas = ["total_sales", "na_sales", "jp_sales", "pal_sales", "other_sales"]
-    
-    for coluna in colunas_metricas:
-        if coluna in df.columns:
-            df[coluna] = df[coluna] * 1000000
-
-    return df
-
 def ordenar_rating(df):
-    df_ordenado = df.sort_values(by="critic_score", ascending=False)
+    df_ordenado = df.sort_values(by="Positive", ascending=False)
     return df_ordenado
 
 def remove_duplicates(df):
-    df_limpo = df.drop_duplicates(subset=["title"]).copy()
+    df_limpo = df.drop_duplicates(subset=["Name"]).copy()
     return df_limpo
 
 def remover_nans_geral(df):
-    df = df.dropna(subset=["Genres", "Metacritic score", "User score"]).copy()
+    df = df.dropna(
+        subset=["Genres", "Metacritic score", "Positive", "Negative"]).copy()
+
     df = df[df["Metacritic score"] > 1]
+
     return df
 
 def delete_unecessary_collumns(df_limpo):
     df_limpo = df_limpo.drop(columns=['AppID', 'Estimated owners', 'Peak CCU', 'Required age', 'Price', 'DiscountDLC count', 'About the game', 'Supported languages', 
                                       'Full audio languages', 'Reviews', 'Header image', 'Website', 'Support url', 'Support email', 'Windows', 'Mac', 'Linux',
-                                      'Metacritic url', 'Positive', 'Negative', 'Achievements', 'Recommendations', 'Notes', 'Average playtime forever', 
+                                      'Metacritic url', 'Achievements', 'Recommendations', 'Notes', 'Average playtime forever', 
                                       'Average playtime two weeks', 'Median playtime forever', 'Median playtime two weeks', 'Publishers', 'Categories',
-                                      'Tags', 'Screenshots', 'Movies', 'Score rank'])
+                                      'Tags', 'Screenshots', 'Movies', 'Score rank', "User score"])
     return df_limpo
+
+# percentual de relação entre notas positivas e negativas
+def criar_percentual_positivo(df):
+    total = df["Positive"] + df["Negative"]
+
+    df["percentual_positivo"] = (df["Positive"] / total * 100)
+
+    return df
+
+# arrumar datas para ter certeza que estão no formato correto
+def corrigir_datas(df):
+    df["Release date"] = pd.to_datetime(df["Release date"], errors="coerce")
+
+    return df
+
+# ter certeza que nas colunas está sendo usado números
+def corrigir_tipos(df):
+    colunas_numericas = ["Metacritic score", "Positive", "Negative"]
+
+    for coluna in colunas_numericas:
+        df[coluna] = pd.to_numeric(df[coluna], errors="coerce")
+
+    return df
+
 
 def main():
     df, origem = carregar()
 
+    df = corrigir_tipos(df)
     df = remover_nans_geral(df)
-    df_limpo = delete_unecessary_collumns(df)
-    #df_limpo = remove_duplicates(df_ordenado)
+    df = delete_unecessary_collumns(df)
+    df = corrigir_datas(df)
+    df = criar_percentual_positivo(df)
+    df = ordenar_rating(df)
+    df_limpo = criar_percentual_positivo(df)
 
     caminho_saida = PRATA / origem.name
     df_limpo.to_csv(caminho_saida, index=False)

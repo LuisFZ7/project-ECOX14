@@ -14,9 +14,6 @@ def carregar():
         raise FileNotFoundError(f"nada em {BRONZE}")
     caminho = arquivos[-1]
     df = pd.read_csv(caminho)
-    #print("lido:", caminho.name, df.shape)
-    #print(df.columns.tolist())
-    #print(df.isna().sum())
     return df, caminho
 
 def tirar_espacos(df):
@@ -25,17 +22,6 @@ def tirar_espacos(df):
         df[coluna] = df[coluna].str.strip()
     return df
 
-def conferir_chave(df, chave="title"):
-    repetidas = df[chave].duplicated().sum()
-    print("chaves repetidas:", repetidas)
-    if repetidas:
-        print(df[df[chave].duplicated(keep=False)])
-    return df.drop_duplicates(subset=chave)
-
-def transformK_number(valor):
-    if pd.isna(valor):
-        return valor
-    
 def tratar_metricas_jogos(df):
     colunas_metricas = ["total_sales", "na_sales", "jp_sales", "pal_sales", "other_sales"]
     
