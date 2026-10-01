@@ -82,6 +82,10 @@ def corrigir_tipos(df):
 
     return df
 
+def quantidade_generos(df):
+    df["quantidade_generos"] = (df["Genres"].str.split(",").str.len()) 
+    return df   
+
 
 def main():
     df, origem = carregar()
@@ -92,6 +96,7 @@ def main():
     df = corrigir_datas(df)
     df = criar_percentual_positivo(df)
     df = ordenar_rating(df)
+    df = quantidade_generos(df)
     df_limpo = criar_percentual_positivo(df)
 
     caminho_saida = PRATA / origem.name

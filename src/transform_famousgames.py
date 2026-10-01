@@ -32,7 +32,7 @@ def tratar_metricas_jogos(df):
     return df
 
 def ordenar_rating(df):
-    df_ordenado = df.sort_values(by="critic_score", ascending=False)
+    df_ordenado = df.sort_values(by="total_sales", ascending=False)
     return df_ordenado
 
 def remove_duplicates(df):
