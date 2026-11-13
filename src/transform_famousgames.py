@@ -1,6 +1,8 @@
 import json
 from datetime import datetime
 from pathlib import Path
+import re
+import unicodedata
 
 import pandas as pd
 
@@ -47,12 +49,33 @@ def delete_unecessary_collumns(df_limpo):
     df_limpo = df_limpo.drop(columns=['img', 'last_update', 'na_sales', 'jp_sales', 'pal_sales', 'other_sales'])
     return df_limpo
 
+def normalize_names(df):
+    def normalizar(nome):
+        nome = str(nome)
+
+        nome = re.sub(r"[®™©]", "", nome)
+
+        nome = unicodedata.normalize("NFKD", nome)
+        nome = "".join(
+            c for c in nome
+            if not unicodedata.combining(c)
+        )
+
+        nome = nome.lower()
+        nome = re.sub(r"[^a-z0-9]+", "_", nome)
+
+        return nome.strip("_")
+
+    df["normalized_title"] = df["title"].apply(normalizar)
+    return df
+
 def main():
     df, origem = carregar()
     tratar_metricas_jogos(df)
     df_ordenado = ordenar_rating(df)
     df_limpo = remove_duplicates(df_ordenado)
     df_limpo = delete_unecessary_collumns(df_limpo)
+    df_limpo = normalize_names(df_limpo)
     df_limpo = df_limpo.dropna(subset=["total_sales"])
 
     caminho_saida = PRATA / origem.name

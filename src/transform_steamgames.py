@@ -2,6 +2,9 @@ import json
 from datetime import datetime
 from pathlib import Path
 import csv
+import re
+import unicodedata
+
 
 import pandas as pd
 
@@ -52,7 +55,7 @@ def remover_nans_geral(df):
     return df
 
 def delete_unecessary_collumns(df_limpo):
-    df_limpo = df_limpo.drop(columns=['AppID', 'Estimated owners', 'Peak CCU', 'Required age', 'Price', 'DiscountDLC count', 'About the game', 'Supported languages', 
+    df_limpo = df_limpo.drop(columns=['Estimated owners', 'Peak CCU', 'Required age', 'Price', 'DiscountDLC count', 'About the game', 'Supported languages', 
                                       'Full audio languages', 'Reviews', 'Header image', 'Website', 'Support url', 'Support email', 'Windows', 'Mac', 'Linux',
                                       'Metacritic url', 'Achievements', 'Recommendations', 'Notes', 'Average playtime forever', 
                                       'Average playtime two weeks', 'Median playtime forever', 'Median playtime two weeks', 'Publishers', 'Categories',
@@ -86,6 +89,40 @@ def quantidade_generos(df):
     df["quantidade_generos"] = (df["Genres"].str.split(",").str.len()) 
     return df   
 
+def duplicados(df):
+    df = df.drop_duplicates(
+    subset=["Name"],
+    keep="first"
+)
+    return df
+
+def normalize_names(df):
+    def normalizar(nome):
+        nome = str(nome)
+
+        nome = re.sub(r"[®™©]", "", nome)
+
+        nome = unicodedata.normalize("NFKD", nome)
+        nome = "".join(
+            c for c in nome
+            if not unicodedata.combining(c)
+        )
+
+        nome = nome.lower()
+        nome = re.sub(r"[^a-z0-9]+", "_", nome)
+
+        return nome.strip("_")
+
+    df["normalized_title"] = df["Name"].apply(normalizar)
+    return df
+
+def remover_duplicatas_normalizadas(df):
+    df = df.drop_duplicates(
+        subset=["normalized_title"],
+        keep=False
+    ).copy()
+
+    return df
 
 def main():
     df, origem = carregar()
@@ -97,6 +134,9 @@ def main():
     df = criar_percentual_positivo(df)
     df = ordenar_rating(df)
     df = quantidade_generos(df)
+    df = duplicados(df)
+    df = normalize_names(df)
+    df = remover_duplicatas_normalizadas(df)
     df_limpo = criar_percentual_positivo(df)
 
     caminho_saida = PRATA / origem.name
