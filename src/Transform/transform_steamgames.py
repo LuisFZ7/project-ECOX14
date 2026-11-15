@@ -4,18 +4,16 @@ from pathlib import Path
 import csv
 import re
 import unicodedata
-
+from config import BRONZESG, PRATA
 
 import pandas as pd
 
-BRONZE = Path("../dados/bronze/SteamGames")
-PRATA = Path("../dados/prata/SteamGames")
 PADRAO = "gamessteam_*.csv"
 
 def carregar():
-    arquivos = sorted(BRONZE.glob(PADRAO))
+    arquivos = sorted(BRONZESG.glob(PADRAO))
     if not arquivos:
-        raise FileNotFoundError(f"nada em {BRONZE}")
+        raise FileNotFoundError(f"nada em {BRONZESG}")
 
     caminho = arquivos[-1]
 

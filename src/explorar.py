@@ -1,11 +1,11 @@
 from pathlib import Path
 import pandas as pd
+from config import BRONZE, PRATA
 from data_profiling import ProfileReport
 from wordcloud import WordCloud
 
 RELATORIOS = Path("relatorios")
 
-BRONZE = Path("../dados/bronze/PopularGames")
 PADRAO = "games*.csv"
 
 

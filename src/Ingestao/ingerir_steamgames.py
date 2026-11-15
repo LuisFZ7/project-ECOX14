@@ -4,10 +4,9 @@ from datetime import date
 from datetime import datetime
 import shutil
 import json
-
+from config import BRONZE, PRATA
 
 DATASET = "fronkongames/steam-games-dataset"
-BRONZE = Path("../dados/bronze/SteamGames")
 
 def baixar():
     pasta = kagglehub.dataset_download(DATASET)

@@ -3,17 +3,15 @@ from datetime import datetime
 from pathlib import Path
 import re
 import unicodedata
-
+from config import BRONZEFG, PRATA
 import pandas as pd
 
-BRONZE = Path("../dados/bronze/FamousGames")
-PRATA = Path("../dados/prata/FamousGames")
 PADRAO = "gamesfamous_*.csv"
 
 def carregar():
-    arquivos = sorted(BRONZE.glob(PADRAO))
+    arquivos = sorted(BRONZEFG.glob(PADRAO))
     if not arquivos:
-        raise FileNotFoundError(f"nada em {BRONZE}")
+        raise FileNotFoundError(f"nada em {BRONZEFG}")
     caminho = arquivos[-1]
     df = pd.read_csv(caminho)
     return df, caminho

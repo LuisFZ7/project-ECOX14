@@ -55,7 +55,7 @@ def estatisticas(famous_games, steam_games):
     esq = set(steam_games["normalized_title"])
     dir_ = set(famous_games["normalized_title"])
 
-    print("\nESTATÍSTICAS DOS NOMES")
+    print("\nNomes Correspondentes")
     print("Steam Games:", len(esq - dir_))
     print("Famous Games:", len(dir_ - esq))
     print("Ambos:", len(esq & dir_))
