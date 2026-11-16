@@ -4,7 +4,7 @@ from pathlib import Path
 import csv
 import re
 import unicodedata
-from config import BRONZESG, PRATA
+from config import BRONZESG, PRATASG
 
 import pandas as pd
 
@@ -64,7 +64,7 @@ def delete_unecessary_collumns(df_limpo):
 def criar_percentual_positivo(df):
     total = df["Positive"] + df["Negative"]
 
-    df["percentual_positivo"] = (df["Positive"] / total * 100)
+    df["percentual_positivo"] = (df["Positive"] / total.where(total != 0) * 100)
 
     return df
 
@@ -122,6 +122,13 @@ def remover_duplicatas_normalizadas(df):
 
     return df
 
+def salvar(df, origem):
+    PRATASG.mkdir(parents=True, exist_ok=True)
+    destino = PRATASG / origem.with_suffix(".parquet").name
+    df.to_parquet(destino, index=False)
+    print("salvo em:", destino, df.shape)
+    return destino
+
 def main():
     df, origem = carregar()
 
@@ -136,12 +143,9 @@ def main():
     df = normalize_names(df)
     df = remover_duplicatas_normalizadas(df)
     df_limpo = criar_percentual_positivo(df)
-
-    caminho_saida = PRATA / origem.name
-    df_limpo.to_csv(caminho_saida, index=False)
+    destino = salvar(df_limpo, origem)
     
-    print(df_limpo.head(10))
-    
+#   print(df_limpo.head(10))
 
 if __name__ == "__main__":
     main()

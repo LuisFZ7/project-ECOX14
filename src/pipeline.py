@@ -1,36 +1,41 @@
 
 import logging
 import sys
-
+from config import configurar_log
 from config import RAIZ
-import Ingestao.ingerir_famousgames as ingerir_famousgames
-import Ingestao.ingerir_steamgames as ingerir_steamgames
-import Transform.transform_famousgames as transform_famousgames
-import Transform.transform_steamgames as transform_steamgames
+
+log = logging.getLogger(__name__)
+
+def etapa_ingestao():
+    import Ingestao.ingerir_famousgames as ingerir_famousgames
+    import Ingestao.ingerir_steamgames as ingerir_steamgames
+
+    ingerir_famousgames.main()
+    ingerir_steamgames.main()
 
 
-log = logging.getLogger("pipeline")
+def etapa_transform():
+    import Transform.transform_famousgames as transform_famousgames
+    import Transform.transform_steamgames as transform_steamgames
+    
+    transform_famousgames.main()
+    transform_steamgames.main()
 
+def etapa_enriquecer():
+    import enriquecer
+    
+    enriquecer.main()
 
-def configurar_log():
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-        datefmt="%H:%M:%S",
-        handlers=[
-            logging.FileHandler(RAIZ / "pipeline.log"),
-            logging.StreamHandler(),
-        ],
-    )
-
+def etapa_carga():
+    import carga
+    carga.main()
 
 ETAPAS = [
-    ("ingerir_famousgames", ingerir_famousgames.main),
-    ("ingerir_steamgames", ingerir_steamgames.main),
-    ("transform_famousgames", transform_famousgames.main),
-    ("transform_steamgames", transform_steamgames.main),
+    ("ingestao", etapa_ingestao),
+    ("transform", etapa_transform),
+    ("enriquecer", etapa_enriquecer),
+    ("carga", etapa_carga),
 ]
-
 
 def executar(nome, funcao):
     log.info("etapa %s: inicio", nome)

@@ -1,34 +1,25 @@
 from pathlib import Path
 import pandas as pd
-import re
-import unicodedata
+from config import PRATAFG, PRATASG
 
-
-FAMOUSGAMES = Path("../dados/prata/FamousGames")
-STEAMGAMES = Path("../dados/prata/SteamGames")
+PRATAFG = Path("../dados/prata/FamousGames")
+PRATASG = Path("../dados/prata/SteamGames")
 
 def carregar_dados():
     arquivo_famous = max(
-        FAMOUSGAMES.glob("gamesfamous_*.csv"),
+        PRATAFG.glob("gamesfamous_*.parquet"),
         key=lambda x: x.name
     )
 
     arquivo_steam = max(
-        STEAMGAMES.glob("gamessteam_*.csv"),
+        PRATASG.glob("gamessteam_*.parquet"),
         key=lambda x: x.name
     )
 
-    famous_games = pd.read_csv(arquivo_famous)
-    steam_games = pd.read_csv(arquivo_steam)
+    famous_games = pd.read_parquet(arquivo_famous)
+    steam_games = pd.read_parquet(arquivo_steam)
 
     return famous_games, steam_games
-
-def normalizar(nome):
-    nome = str(nome).casefold()
-    nome = unicodedata.normalize("NFKD", nome)
-    nome = "".join(c for c in nome if not unicodedata.combining(c))
-    nome = re.sub(r"[^a-z0-9]+", " ", nome)
-    return nome.strip()
 
 def juntar(famous_games, steam_games):
     return famous_games.merge(
@@ -77,6 +68,14 @@ def verificar_duplicatas(steam_games):
         ].to_string(index=False)
     )
 
+def salvar(resultado):
+    destino = Path("../dados/prata/games.parquet")
+    destino.parent.mkdir(parents=True, exist_ok=True)
+
+    resultado.to_parquet(destino, index=False)
+
+    print("Salvo em:", destino)
+
 def main():
     famous_games, steam_games = carregar_dados()
 
@@ -84,10 +83,13 @@ def main():
 
     resultado = juntar(famous_games, steam_games)
 
+    salvar(resultado)
+
     sem_correspondencia = validar(
         famous_games,
         resultado
     )
+    print(resultado.columns.tolist())
 
     estatisticas(famous_games, steam_games)
 

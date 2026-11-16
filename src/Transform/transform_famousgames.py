@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 import re
 import unicodedata
-from config import BRONZEFG, PRATA
+from config import BRONZEFG, PRATAFG
 import pandas as pd
 
 PADRAO = "gamesfamous_*.csv"
@@ -67,6 +67,14 @@ def normalize_names(df):
     df["normalized_title"] = df["title"].apply(normalizar)
     return df
 
+
+def salvar(df, origem):
+    PRATAFG.mkdir(parents=True, exist_ok=True)
+    destino = PRATAFG / origem.with_suffix(".parquet").name
+    df.to_parquet(destino, index=False)
+    print("salvo em:", destino, df.shape)
+    return destino
+
 def main():
     df, origem = carregar()
     tratar_metricas_jogos(df)
@@ -75,11 +83,9 @@ def main():
     df_limpo = delete_unecessary_collumns(df_limpo)
     df_limpo = normalize_names(df_limpo)
     df_limpo = df_limpo.dropna(subset=["total_sales"])
+    destino = salvar(df_limpo, origem)
 
-    caminho_saida = PRATA / origem.name
-    df_limpo.to_csv(caminho_saida, index=False)
-    
-    print(df_limpo.head(10))
+#   print(df_limpo.head(10))
     
 
 if __name__ == "__main__":
