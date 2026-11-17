@@ -6,9 +6,11 @@
 
 # Dados: ficam apenas na sua maquina, nunca no GitHub.
 # Ignora apenas os arquivos de dados pesados em qualquer lugar da pasta dados
-dados/**/*.csv
-dados/**/*.jsonl
-dados/**/*.parquet
+dados//*.csv
+dados//.jsonl
+dados/**/.parquet
+dados//*.duckdb
+dados//*.duckdb.wal
 src/relatorios/
 
 # Excecao: mantem as pastas visiveis no GitHub, mesmo vazias.
@@ -29,3 +31,14 @@ venv/
 # Credenciais: nunca versione senhas ou chaves de acesso
 .env
 kaggle.json
+
+logs/
+*.log
+
+ecox14/target/
+ecox14/logs/
+ecox14/dbt_packages/
+ecox14/.user.yml
+
+*.tmp
+*.bak
