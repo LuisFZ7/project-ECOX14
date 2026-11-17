@@ -183,8 +183,8 @@ def main():
         criar_esquemas(con)
         carregar_prata(con)
         verificar_duplicados(con)
-        construir_ouro(con)
-        conferir(con)
+    #    construir_ouro(con)
+    #    conferir(con)
 
     finally:
         con.close()

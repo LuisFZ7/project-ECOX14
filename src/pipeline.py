@@ -1,8 +1,7 @@
 
 import logging
 import sys
-from config import configurar_log
-from config import RAIZ
+import config
 
 log = logging.getLogger(__name__)
 
@@ -30,11 +29,19 @@ def etapa_carga():
     import carga
     carga.main()
 
+def etapa_modelagem():
+    import subprocess
+    subprocess.run(
+        ["dbt", "run"], 
+        cwd=config.RAIZ / "ecox14",
+        check=True)
+
 ETAPAS = [
     ("ingestao", etapa_ingestao),
     ("transform", etapa_transform),
     ("enriquecer", etapa_enriquecer),
     ("carga", etapa_carga),
+    ("modelagem", etapa_modelagem),
 ]
 
 def executar(nome, funcao):
@@ -50,26 +57,27 @@ def executar(nome, funcao):
 
 
 def main(a_partir_de=None):
-    configurar_log()
+    config.configurar_log()
 
-    nomes_etapas = [nome for nome, _ in ETAPAS]
-
-    if a_partir_de is not None and a_partir_de not in nomes_etapas:
-        raise ValueError(f"Etapa desconhecida: {a_partir_de}")
-
+    nomes = [nome for nome, _ in ETAPAS]
+    if a_partir_de and a_partir_de not in nomes:
+        log.error("etapa desconhecida: %s", a_partir_de)
+        log.error("etapas validas: %s", ", ".join(nomes))
+        return 1
     comecou = a_partir_de is None
 
     for nome, funcao in ETAPAS:
-
         if nome == a_partir_de:
             comecou = True
-
-        if not comecou or funcao is None:
+        if not comecou:
             log.info("etapa %s: pulada", nome)
             continue
-
+        if funcao is None:
+            log.warning("etapa %s: ainda nao implementada", nome)
+            continue
         executar(nome, funcao)
-
+    log.info("pipeline concluido")
+    return 0
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else None)
+    sys.exit(main(sys.argv[1] if len(sys.argv) > 1 else None))
