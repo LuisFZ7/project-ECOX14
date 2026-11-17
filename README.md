@@ -12,3 +12,5 @@ FamousGames juntado ao SteamGames por normalized_title, utilizando how=left.
 - Correspondências: 723
 - Sem correspondências: 11468
 
+## Limitações dos dados
+Foram encontradas limitações nas quantidades de jogos vendidos, devido ao fato que muitos jogos são multi-plataforma e os datasets utilizados não possuem todas as plataformas, isso deve afetar análises.
