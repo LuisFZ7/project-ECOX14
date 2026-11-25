@@ -1,9 +1,6 @@
 from pathlib import Path
 import pandas as pd
-from config import PRATAFG, PRATASG
-
-PRATAFG = Path("../dados/prata/FamousGames")
-PRATASG = Path("../dados/prata/SteamGames")
+from config import *
 
 def carregar_dados():
     arquivo_famous = max(
@@ -79,7 +76,7 @@ def estatisticas(famous_games, steam_games):
     print("Ambos:", len(esq & dir_))
 
 def salvar(resultado):
-    destino = Path("../dados/prata/games.parquet")
+    destino = PRATA / "games.parquet"
     destino.parent.mkdir(parents=True, exist_ok=True)
 
     resultado.to_parquet(destino, index=False)
@@ -106,3 +103,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
