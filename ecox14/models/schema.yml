@@ -1,0 +1,77 @@
+
+version: 2
+
+models:
+
+  - name: dim_jogos
+    description: >
+      Cadastro de jogos, com uma linha por jogo.
+      Origem: tabela games resultante do enriquecimento dos dados
+      de SteamGames e FamousGames.
+
+    columns:
+      - name: normalized_title
+        description: Título normalizado do jogo. Chave da dimensão.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: AppID
+        description: Identificador do jogo na Steam.
+
+      - name: nome
+        description: Nome do jogo.
+
+      - name: genero
+        description: Gêneros do jogo.
+
+      - name: publicadora
+        description: Publicadora do jogo.
+
+      - name: desenvolvedora
+        description: Desenvolvedora do jogo.
+
+      - name: data_lancamento
+        description: Data de lançamento do jogo.
+
+  - name: fato_jogos
+    description: >
+      Indicadores de vendas e avaliações dos jogos.
+      Cada registro representa um jogo.
+      O relacionamento com dim_jogos é feito através de normalized_title.
+
+    columns:
+      - name: normalized_title
+        description: Título normalizado do jogo. Chave estrangeira.
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_jogos')
+              field: normalized_title
+
+      - name: AppID
+        description: Identificador do jogo na Steam.
+
+      - name: vendas_totais
+        description: Vendas totais somadas entre as plataformas.
+        data_tests:
+          - not_null
+
+      - name: percentual_positivo
+        description: Percentual de avaliações positivas.
+
+      - name: avaliacoes_positivas
+        description: Quantidade de avaliações positivas.
+
+      - name: avaliacoes_negativas
+        description: Quantidade de avaliações negativas.
+
+      - name: quantidade_generos
+        description: Quantidade de gêneros atribuídos ao jogo.
+
+      - name: nota_da_critica
+        description: Nota da crítica dada ao jogo.
+
+  - name: vw_jogos
+    description: >
+      Fato e dimensão unidos para utilização em consultas e visualizações.

@@ -21,14 +21,41 @@ def carregar_dados():
 
     return famous_games, steam_games
 
+#agrupar os jogos de diferentes plataformas em um unico jogo para visualizar as vendas
+def agrupar_famous(famous_games):
+    agrupado = (
+        famous_games
+        .groupby("normalized_title", as_index=False)
+        .agg({
+            "title": "first",
+            "total_sales": "sum",
+            "genre": "first",
+            "publisher": "first",
+            "developer": "first",
+            "release_date": "first",
+        })
+    )
+
+    return agrupado
+
+def remover_duplicatas_normalizadas(df):
+    df = df.drop_duplicates(
+        subset=["normalized_title"],
+        keep=False
+    ).copy()
+
+    return df
+
+
 def juntar(famous_games, steam_games):
-    return famous_games.merge(
+    resultado = famous_games.merge(
     steam_games,
     left_on="normalized_title",
     right_on="normalized_title",
     how="left",
     validate="many_to_one",
     )
+    return resultado
 
 def validar(famous_games, resultado):
     sem_par = resultado["AppID"].isna()
@@ -51,23 +78,6 @@ def estatisticas(famous_games, steam_games):
     print("Famous Games:", len(dir_ - esq))
     print("Ambos:", len(esq & dir_))
 
-def verificar_duplicatas(steam_games):
-    duplicados = steam_games[
-        steam_games.duplicated(
-            subset=["normalized_title"],
-            keep=False
-        )
-    ].sort_values("normalized_title")
-
-    print("\nDUPLICATAS NO STEAM GAMES")
-    print("Total de registros duplicados:", len(duplicados))
-
-    print(
-        duplicados[
-            ["Name", "normalized_title", "AppID"]
-        ].to_string(index=False)
-    )
-
 def salvar(resultado):
     destino = Path("../dados/prata/games.parquet")
     destino.parent.mkdir(parents=True, exist_ok=True)
@@ -79,7 +89,8 @@ def salvar(resultado):
 def main():
     famous_games, steam_games = carregar_dados()
 
-    verificar_duplicatas(steam_games)
+    steam_games = remover_duplicatas_normalizadas(steam_games)
+    famous_games = agrupar_famous(famous_games)
 
     resultado = juntar(famous_games, steam_games)
 

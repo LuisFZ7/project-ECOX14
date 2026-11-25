@@ -12,8 +12,6 @@ BRONZESG = BRONZE / "SteamGames"
 PRATA = DADOS / "prata"
 PRATAFG = PRATA / "FamousGames"
 PRATASG = PRATA / "SteamGames"
-
-
 OURO = DADOS / "ouro"
 
 def configurar_log():
@@ -26,7 +24,3 @@ def configurar_log():
             logging.StreamHandler(),
         ],
     )
-
-
-# nos outros arquivos
-#from config import BRONZE, PRATA

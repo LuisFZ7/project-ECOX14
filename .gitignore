@@ -6,12 +6,13 @@
 
 # Dados: ficam apenas na sua maquina, nunca no GitHub.
 # Ignora apenas os arquivos de dados pesados em qualquer lugar da pasta dados
-dados//*.csv
-dados//.jsonl
-dados/**/.parquet
-dados//*.duckdb
-dados//*.duckdb.wal
+dados/**/*.csv
+dados/**/*.jsonl
+dados/**/*.parquet
+dados/**/*.duckdb
+dados/**/*.duckdb.wal
 src/relatorios/
+src/consultar.py
 
 # Excecao: mantem as pastas visiveis no GitHub, mesmo vazias.
 !dados/**/.gitkeep

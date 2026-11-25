@@ -4,7 +4,7 @@ from datetime import date
 from datetime import datetime
 import shutil
 import json
-from config import BRONZE, PRATA
+from config import BRONZEFG, BRONZEFG
 
 
 DATASET = "ujjwalaggarwal402/video-games-dataset"
@@ -28,9 +28,9 @@ def localizar(pasta):
     return arquivos[0]
 
 def copiar(origem):
-    BRONZE.mkdir(parents=True, exist_ok=True)
+    BRONZEFG.mkdir(parents=True, exist_ok=True)
     hoje = date.today().strftime("%Y%m%d")
-    destino = BRONZE / f"gamesfamous_{hoje}.csv"
+    destino = BRONZEFG / f"gamesfamous_{hoje}.csv"
     shutil.copy(origem, destino)
     return destino
 
@@ -42,7 +42,7 @@ def registrar(origem, destino):
         "extraido_em": datetime.now().isoformat(),
     }
 
-    caminho = BRONZE / "proveniencia.jsonl"
+    caminho = BRONZEFG / "proveniencia.jsonl"
     with caminho.open("a", encoding="utf-8") as f:
         f.write(json.dumps(info, ensure_ascii=False) + "\n")
 

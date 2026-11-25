@@ -114,13 +114,6 @@ def normalize_names(df):
     df["normalized_title"] = df["Name"].apply(normalizar)
     return df
 
-def remover_duplicatas_normalizadas(df):
-    df = df.drop_duplicates(
-        subset=["normalized_title"],
-        keep=False
-    ).copy()
-
-    return df
 
 def salvar(df, origem):
     PRATASG.mkdir(parents=True, exist_ok=True)
@@ -141,7 +134,6 @@ def main():
     df = quantidade_generos(df)
     df = duplicados(df)
     df = normalize_names(df)
-    df = remover_duplicatas_normalizadas(df)
     df_limpo = criar_percentual_positivo(df)
     destino = salvar(df_limpo, origem)
     
