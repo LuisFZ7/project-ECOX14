@@ -17,33 +17,36 @@ Foram encontradas limitações nas quantidades de jogos vendidos, devido ao fato
 
 ## Ordem de execução do projeto
 
-Clonagem:
+**Clonagem:**
 
+```
 git clone https://github.com/LuisFZ7/project-ECOX14.git
 cd project-ECOX14
+```
 
-Criação do ambiente virtual:
-
+**Criação do ambiente virtual:**
+```
 python -m venv .venv
-
-Ativar no windows:
-
+```
+**Ativar no windows:**
+```
 .venv\Scripts\activate
-
-Instalar dependências:
-
+```
+**Instalar dependências:**
+```
 pip install -r requirements.txt
-
-Execução do Pipeline:
-
+```
+**Execução do Pipeline:**
+```
 python src/pipeline.py
-
-Executar a modelagem com dbt:
-
+```
+**Executar a modelagem com dbt:**
+```
 cd ecox14
 dbt run
-
-Iniciar dashboard do streamlit
-
+```
+**Iniciar dashboard do streamlit**
+```
 cd ..
 streamlit run dashboard/painel.py
+```
